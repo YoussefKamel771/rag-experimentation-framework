@@ -7,3 +7,4 @@ artifacts/
 data/raw/*
 data/processed/*
 !.gitkeep
+test.ipynb
