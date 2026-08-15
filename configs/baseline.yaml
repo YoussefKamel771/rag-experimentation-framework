@@ -1,0 +1,20 @@
+# Human-readable experiment configuration.
+# The CLI currently accepts the same core values directly.
+experiment_name: baseline_recursive
+
+input_dir: data/raw
+output_dir: artifacts/indexes/baseline
+
+chunking:
+  strategy: recursive
+  chunk_size: 1000
+  chunk_overlap: 150
+
+embedding:
+  provider: ollama
+  model: nomic-embed-text
+  base_url: http://localhost:11434
+
+vector_store:
+  type: faiss
+  metric: cosine
