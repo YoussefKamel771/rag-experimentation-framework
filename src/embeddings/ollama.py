@@ -4,8 +4,10 @@ import numpy as np
 import httpx
 from tqdm import tqdm
 from .base import EmbeddingModel
+from src.plugins.registry import embedding_registry
 
 
+@embedding_registry.register("ollama")
 class OllamaEmbedding(EmbeddingModel):
     """Ollama embeddings through its OpenAI-compatible /v1/embeddings API."""
 
@@ -70,6 +72,8 @@ class OllamaEmbedding(EmbeddingModel):
             batches.append(self._embed_batch(batch))
 
         vectors = np.vstack(batches)
+
+        self.embedding_size = vectors.shape[1]
 
         # Normalize once so FAISS inner product becomes cosine similarity.
         norms = np.linalg.norm(vectors, axis=1, keepdims=True)
