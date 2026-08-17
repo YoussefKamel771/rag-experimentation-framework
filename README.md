@@ -15,7 +15,7 @@ Pluggable Chunker
    ↓
 Pluggable Embedding Model
    ↓
-FAISS Vector Index
+Pluggable Vector Index
    ↓
 Persisted Index + Chunk Metadata
 ```
