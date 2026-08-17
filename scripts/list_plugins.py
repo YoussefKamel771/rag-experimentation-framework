@@ -1,0 +1,6 @@
+from src.plugins.registry_loader import load_all_plugins
+from src.plugins.registry import chunker_registry, embedding_registry, vector_store_registry
+load_all_plugins()
+print("Chunkers:", chunker_registry.names())
+print("Embeddings:", embedding_registry.names())
+print("Vector stores:", vector_store_registry.names())
