@@ -1,0 +1,22 @@
+input_dir: data/raw/text_data_toc.csv
+output_dir: artifacts
+
+chunking:
+  strategy: recursive
+  params:
+    chunk_size: 1000
+    chunk_overlap: 150
+
+embedding:
+  provider: sentence_transformers
+  params:
+    model: intfloat/e5-base-v2
+    batch_size: 32
+    device: cpu
+
+vector_store:
+  type: qdrant
+  params:
+    path: artifacts/qdrant
+    collection_name: rag_chunks
+    distance: cosine

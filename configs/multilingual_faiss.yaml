@@ -1,0 +1,17 @@
+experiment_name: recursive_multilingual_e5_faiss
+input_dir: data/raw
+output_dir: artifacts/indexes
+chunking:
+  strategy: recursive
+  params:
+    chunk_size: 1000
+    chunk_overlap: 150
+embedding:
+  provider: sentence_transformers
+  params:
+    model: intfloat/multilingual-e5-small
+    batch_size: 32
+vector_store:
+  type: faiss
+  params:
+    metric: cosine

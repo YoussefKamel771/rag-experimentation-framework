@@ -1,0 +1,19 @@
+experiment_name: semantic_ollama_qdrant
+input_dir: data/raw
+output_dir: artifacts/indexes
+chunking:
+  strategy: semantic
+  params:
+    max_chunk_size: 1200
+    min_chunk_size: 150
+    similarity_threshold: 0.72
+embedding:
+  provider: ollama
+  params:
+    model: nomic-embed-text
+    base_url: http://localhost:11434
+    batch_size: 32
+vector_store:
+  type: qdrant
+  params:
+    distance: cosine
