@@ -5,19 +5,21 @@ from pathlib import Path
 
 import faiss
 import numpy as np
-
+from src.plugins.registry import vector_store_registry
+from .base import VectorStore
 from  src.ingestion.models import Chunk
 
-
-class FAISSStore:
+@vector_store_registry.register("faiss")
+class FAISSStore(VectorStore):
     """
     Persistent FAISS store using normalized vectors + inner product,
     which is equivalent to cosine similarity.
     """
 
-    def __init__(self):
+    def __init__(self, path: str | Path):
         self.index: faiss.Index | None = None
         self.chunks: list[Chunk] = []
+        self.path = path
 
     def build(self, vectors: np.ndarray, chunks: list[Chunk]) -> None:
         if len(vectors) != len(chunks):
@@ -26,16 +28,17 @@ class FAISSStore:
         if len(vectors) == 0:
             raise ValueError("Cannot build an empty index")
 
+
         dimension = vectors.shape[1]
         self.index = faiss.IndexFlatIP(dimension)
         self.index.add(vectors)
         self.chunks = chunks
 
-    def save(self, output_dir: str | Path) -> None:
+    def save(self) -> None:
         if self.index is None:
             raise RuntimeError("Index has not been built")
 
-        output = Path(output_dir)
+        output = Path(self.path)
         output.mkdir(parents=True, exist_ok=True)
 
         faiss.write_index(self.index, str(output / "index.faiss"))
@@ -56,8 +59,8 @@ class FAISSStore:
         print("FAISS saved")
 
     @classmethod
-    def load(cls, output_dir: str | Path) -> "FAISSStore":
-        output = Path(output_dir)
+    def load(cls, path: str | Path) -> "FAISSStore":
+        output = Path(path)
 
         store = cls()
         store.index = faiss.read_index(str(output / "index.faiss"))
