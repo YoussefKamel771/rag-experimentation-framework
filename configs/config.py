@@ -47,6 +47,21 @@ class RetrievalConfig(BaseModel):
     dense: RetrievalDenseConfig | None = None
     lexical: RetrievalLexicalConfig | None = None
 
+class ContextConfig(BaseModel):
+    type: str = "simple"
+
+    params: dict[str, Any] = Field(
+        default_factory=dict
+    )
+
+
+class GenerationConfig(BaseModel):
+    provider: str = "ollama"
+
+    params: dict[str, Any] = Field(
+        default_factory=dict
+    )
+
 class Settings(BaseModel):
     input_dir: Path
     output_dir: Path
@@ -57,6 +72,9 @@ class Settings(BaseModel):
 
     retrieval: RetrievalConfig
     reranker: RerankerConfig
+
+    context: ContextConfig
+    generation: GenerationConfig
 
     def resolve_paths(self) -> None:
         if not self.input_dir.is_absolute():

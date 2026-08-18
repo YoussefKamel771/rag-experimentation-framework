@@ -51,3 +51,20 @@ reranker:
     model: cross-encoder/ms-marco-MiniLM-L-6-v2
     batch_size: 16
     device: cpu
+
+context:
+  type: simple
+
+  params:
+    max_characters: 12000
+    separator: \n\n---\n\n
+    include_metadata: False
+
+generation:
+  provider: ollama
+
+  params:
+    model: qwen3:4b
+    base_url: https://condone-hankering-cushy.ngrok-free.dev
+    temperature: 0.0
+    timeout: 120.0
