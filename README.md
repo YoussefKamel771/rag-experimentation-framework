@@ -1,96 +1,86 @@
-# RAG Experimentation Framework
+# RAG Experimentation Framework — Offline v0.2
 
-A modular, framework-free RAG experimentation project.
-
-## Current scope: Offline / indexing pipeline
+The offline pipeline is now configuration-driven and plugin-based.
 
 ```text
-Documents
-   ↓
-Document Loader
-   ↓
-Cleaning / Normalization
-   ↓
-Pluggable Chunker
-   ↓
-Pluggable Embedding Model
-   ↓
-Pluggable Vector Index
-   ↓
-Persisted Index + Chunk Metadata
+Documents → Loader → Chunker Registry → Embedding Registry → Vector Store Registry
 ```
 
-The first implementation deliberately avoids LangChain/LlamaIndex so the RAG mechanics remain explicit.
+## Plugins
 
-## Requirements
+Chunkers: `fixed`, `recursive`, `sentence`, `markdown`, `semantic`
 
-- Python 3.11+
-- Ollama running locally
-- An Ollama embedding model, for example:
+Embedding providers: `ollama`, `sentence_transformers`
+
+Vector stores: `faiss`, `qdrant`
+
+For Arabic/English experiments, `intfloat/multilingual-e5-small` is included as a local Sentence Transformers option. Ollama remains the simplest local provider.
+
+## Install
+
+```bash
+pip install -e .
+```
+
+For Sentence Transformers:
+
+```bash
+pip install -e ".[hf]"
+```
+
+## Ollama
 
 ```bash
 ollama pull nomic-embed-text
 ```
 
-## Install
+## Add data
+
+Put PDF/TXT/Markdown files in `data/raw/`.
+
+## List plugins
 
 ```bash
-python -m venv .venv
-# Linux/macOS
-source .venv/bin/activate
-# Windows PowerShell:
-# .venv\Scripts\Activate.ps1
-
-pip install -e .
+python scripts/list_plugins.py
 ```
 
-## Add documents
-
-Put PDF, Markdown, or TXT files under:
-
-```text
-data/raw/
-```
-
-## Build an index
+## Run experiments
 
 ```bash
-python scripts/ingest.py \
-  --input-dir data/raw \
-  --output-dir artifacts/indexes/baseline \
-  --embedding-model nomic-embed-text \
-  --chunk-size 1000 \
-  --chunk-overlap 150
+python scripts/ingest.py --config configs/baseline.yaml
+python scripts/ingest.py --config configs/semantic_qdrant.yaml
+python scripts/ingest.py --config configs/multilingual_faiss.yaml
+python scripts/ingest.py --config configs/markdown_qdrant.yaml
 ```
 
-The command creates:
+Each experiment produces a self-contained artifact directory with a manifest describing the selected plugins and parameters.
+
+## Architecture
 
 ```text
-artifacts/indexes/baseline/
-├── index.faiss
-├── chunks.json
-└── manifest.json
+                    OFFLINE INDEXING
+
+Documents
+   ↓
+Loader
+   ↓
+Chunker Registry
+   ├─ fixed
+   ├─ recursive
+   ├─ sentence
+   ├─ markdown
+   └─ semantic ───────┐
+                       │ needs embeddings
+                       ▼
+Embedding Registry
+   ├─ Ollama
+   └─ SentenceTransformers
+   ↓
+Vector Store Registry
+   ├─ FAISS
+   └─ Qdrant
+   ↓
+Artifacts + manifest
 ```
 
-`chunks.json` contains the chunk text and metadata. `manifest.json` records the exact indexing configuration so experiments are reproducible.
-
-## Current modules
-
-- `src/ingestion/` — document loading and cleaning
-- `src/chunking/` — chunker interface + recursive chunker
-- `src/embeddings/` — embedding interface + Ollama implementation
-- `src/vectorstores/` — FAISS persistence
-- `src/pipeline/` — offline indexing orchestration
-
-## Design rule
-
-The evaluation dataset should reference stable document/page/section information, not chunk IDs, because chunking itself is an experimental variable.
-
-## Next milestones
-
-1. Add fixed-size and semantic chunkers.
-2. Add more embedding providers.
-3. Add Qdrant.
-4. Implement online retrieval.
-5. Add evaluation dataset + retrieval metrics.
-6. Add experiment runner and comparison dashboard.
+The evaluation dataset should refer to stable source information (document/page/section), not chunk IDs, because chunking is itself an experimental variable.
