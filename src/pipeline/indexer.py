@@ -120,6 +120,3 @@ def build_index(config: Settings) -> dict:
     return manifest
 
 
-def main() -> None:
-    config = get_settings()
-    build_index(config)
