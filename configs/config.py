@@ -27,10 +27,18 @@ class RetrievalLexicalConfig(BaseModel):
     type: str
     params: dict[str, Any] = Field(default_factory=dict)
 
+class RerankerConfig(BaseModel):
+    type: str = "identity"
+
+    top_k: int = 5
+
+    params: dict[str, Any] = Field(
+        default_factory=dict
+    )
 
 class RetrievalConfig(BaseModel):
     type: str
-    top_k: int = 5
+    candidate_k: int = 20
 
     params: dict[str, Any] = Field(
         default_factory=dict
@@ -48,6 +56,7 @@ class Settings(BaseModel):
     vector_store: VectorStoreConfig
 
     retrieval: RetrievalConfig
+    reranker: RerankerConfig
 
     def resolve_paths(self) -> None:
         if not self.input_dir.is_absolute():
