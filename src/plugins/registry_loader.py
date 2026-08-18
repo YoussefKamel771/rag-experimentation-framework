@@ -10,3 +10,5 @@ def load_all_plugins():
     import src.retrieval.hybrid
     import src.reranking.cross_encoder
     import src.reranking.identity
+    import src.context.simple
+    import src.generation.ollama
