@@ -8,3 +8,5 @@ def load_all_plugins():
     import src.retrieval.dense_faiss
     import src.retrieval.dense_Qdrant
     import src.retrieval.hybrid
+    import src.reranking.cross_encoder
+    import src.reranking.identity
