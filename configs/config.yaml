@@ -20,3 +20,24 @@ vector_store:
     path: artifacts/qdrant
     collection_name: rag_chunks
     distance: cosine
+
+retrieval:
+
+  type: hybrid
+  top_k: 5    
+
+  params:
+    alpha: 0.7
+    candidate_k: 20
+
+  dense:
+    source:
+      type: qdrant
+
+  lexical:
+    type: bm25
+
+    params:
+      chunks_path: artifacts/qdrant/chunks.json
+      k1: 1.5
+      b: 0.75

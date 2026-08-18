@@ -19,6 +19,25 @@ class VectorStoreConfig(BaseModel):
     type: str
     params: dict[str, Any] = Field(default_factory=dict)
 
+class RetrievalDenseConfig(BaseModel):
+    source: dict[str, Any] = Field(default_factory=dict)
+
+
+class RetrievalLexicalConfig(BaseModel):
+    type: str
+    params: dict[str, Any] = Field(default_factory=dict)
+
+
+class RetrievalConfig(BaseModel):
+    type: str
+    top_k: int = 5
+
+    params: dict[str, Any] = Field(
+        default_factory=dict
+    )
+
+    dense: RetrievalDenseConfig | None = None
+    lexical: RetrievalLexicalConfig | None = None
 
 class Settings(BaseModel):
     input_dir: Path
@@ -27,6 +46,8 @@ class Settings(BaseModel):
     chunking: ChunkingConfig
     embedding: EmbeddingConfig
     vector_store: VectorStoreConfig
+
+    retrieval: RetrievalConfig
 
     def resolve_paths(self) -> None:
         if not self.input_dir.is_absolute():
