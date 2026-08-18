@@ -112,5 +112,5 @@ def retrieve(
 
     return retriever.retrieve(
         query,
-        top_k=config.retrieval.top_k,
+        top_k=config.retrieval.candidate_k,
     )

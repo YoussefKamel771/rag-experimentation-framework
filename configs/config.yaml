@@ -24,7 +24,7 @@ vector_store:
 retrieval:
 
   type: hybrid
-  top_k: 5    
+  candidate_k: 20 
 
   params:
     alpha: 0.7
@@ -41,3 +41,13 @@ retrieval:
       chunks_path: artifacts/qdrant/chunks.json
       k1: 1.5
       b: 0.75
+
+reranker:
+  type: cross_encoder
+
+  top_k: 5
+
+  params:
+    model: cross-encoder/ms-marco-MiniLM-L-6-v2
+    batch_size: 16
+    device: cpu
