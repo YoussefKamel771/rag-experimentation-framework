@@ -4,3 +4,7 @@ def load_all_plugins():
     import src.embeddings.ollama
     import src.vectorstores.faiss_store
     import src.vectorstores.qdrant_store
+    import src.retrieval.bm25
+    import src.retrieval.dense_faiss
+    import src.retrieval.dense_Qdrant
+    import src.retrieval.hybrid

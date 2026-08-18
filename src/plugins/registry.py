@@ -27,3 +27,4 @@ class PluginRegistry:
 chunker_registry=PluginRegistry("chunker")
 embedding_registry=PluginRegistry("embedding")
 vector_store_registry=PluginRegistry("vector_store")
+retriever_registry=PluginRegistry("retriever")
