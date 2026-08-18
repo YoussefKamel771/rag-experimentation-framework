@@ -4,7 +4,7 @@ import argparse
 from typing import Any
 
 from configs.config import get_settings, Settings
-from src.pipeline.rag_pipeline import retrieve_and_rerank
+from src.pipeline.reranker import retrieve_and_rerank
 
 
 def run_retrieval_and_rerank(
