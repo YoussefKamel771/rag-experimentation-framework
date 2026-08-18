@@ -1,4 +1,4 @@
-# RAG Experimentation Framework — Offline v0.2
+# RAG Experimentation Framework
 
 The offline pipeline is now configuration-driven and plugin-based.
 
