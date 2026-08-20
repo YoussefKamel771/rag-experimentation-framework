@@ -5,7 +5,7 @@ import json
 from typing import Any
 
 from configs.config import get_settings, Settings
-from src.pipeline.rag_pipeline import run_rag
+from src.pipeline.rag_pipeline import RAGPipeline
 
 
 def execute_rag(
@@ -21,10 +21,9 @@ def execute_rag(
     # --------------------------------------------------
     # Run RAG
     # --------------------------------------------------
-    result = run_rag(
-        config=config,
-        query=query,
-    )
+
+    rag_pipeline = RAGPipeline(config)
+    result = rag_pipeline.run(query=query)
 
     generation = result["generation"]
     context = result["context"]
