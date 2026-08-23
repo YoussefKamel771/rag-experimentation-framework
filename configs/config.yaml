@@ -4,15 +4,15 @@ output_dir: artifacts
 chunking:
   strategy: recursive
   params:
-    chunk_size: 1000
+    chunk_size: 2000
     chunk_overlap: 150
 
 embedding:
-  provider: sentence_transformers
+  provider: ollama
   params:
-    model: intfloat/e5-base-v2
-    batch_size: 32
-    device: cpu
+    model: embeddinggemma:300m
+    base_url: https://condone-hankering-cushy.ngrok-free.dev
+
 
 vector_store:
   type: qdrant
@@ -43,7 +43,7 @@ retrieval:
       b: 0.75
 
 reranker:
-  type: cross_encoder
+  type: identity
 
   top_k: 5
 
