@@ -1,6 +1,6 @@
 {
   "framework_version": "0.1.0",
-  "created_at": "2026-08-22T14:49:19.196183+00:00",
+  "created_at": "2026-08-23T11:38:31.819935+00:00",
   "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
   "input_dir": "/mnt/c/Users/YUSSEF/OneDrive/Desktop/Projects/NlP/rag-experimentation-framework/data/raw/text_data_toc.csv",
   "documents": 5183,
@@ -23,5 +23,5 @@
     "collection_name": "rag_chunks",
     "distance": "cosine"
   },
-  "elapsed_seconds": 453.08
+  "elapsed_seconds": 736.414
 }
