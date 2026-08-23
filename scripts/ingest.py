@@ -1,9 +1,13 @@
-from src.pipeline.indexer import build_index
+from src.pipeline.indexer_pipeline import BEIRIndexer
 from configs.config import get_settings
 
-def run_indexing() -> None:
-    config = get_settings()
-    build_index(config)
+config = get_settings("configs/config.yaml")
 
-if __name__ == "__main__":
-    run_indexing()
+indexer = BEIRIndexer(config, 
+                      dataset="scifact",
+                      beir_data_dir="data/scifact")
+manifest = indexer.build()
+
+# keep the loader around for eval — it holds queries + qrels
+# queries = indexer.loader.get_queries()
+# qrels = indexer.loader.get_qrels()
