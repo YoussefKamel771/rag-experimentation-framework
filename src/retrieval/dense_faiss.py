@@ -76,7 +76,8 @@ class DenseFAISSRetriever(Retriever):
         )
 
         query_vector = self.embedder.embed(
-            [query]
+            [query],
+            is_query=True,
         )
 
         scores, ids = self.index.search(

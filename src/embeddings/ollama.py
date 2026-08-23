@@ -63,7 +63,7 @@ class OllamaEmbedding(EmbeddingModel):
                 # Wait briefly before retrying dropped connections
                 time.sleep(2 * attempt)
 
-    def embed(self, texts: list[str]) -> np.ndarray:
+    def embed(self, texts: list[str], is_query: bool = False) -> np.ndarray:
         if not texts:
             return np.empty((0, 0), dtype=np.float32)
 

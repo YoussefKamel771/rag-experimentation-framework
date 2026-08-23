@@ -59,7 +59,8 @@ class DenseQdrantRetriever(Retriever):
         top_k = max(1, top_k)
 
         query_vector = self.embedder.embed(
-            [query]
+            [query],
+            is_query=True,
         )[0].tolist()
 
         response = self.client.query_points(

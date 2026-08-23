@@ -12,7 +12,7 @@ class EmbeddingModel(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def embed(self, texts: list[str]) -> np.ndarray:
+    def embed(self, texts: list[str], is_query: bool = False) -> np.ndarray:
         """
         Return a float32 matrix of shape:
             (number_of_texts, embedding_dimension)
