@@ -412,7 +412,7 @@ committing to one embedding model.
 
 **Experiment 2 — chunking strategies** (baseline embedding, hybrid retrieval, identity reranker)
 
-![Experiment 2 — chunking strategy comparison, retrieval stage](artifacts/images//chunking.png)
+![Experiment 2 — chunking strategy comparison, retrieval stage](artifacts/images//chunking.PNG)
 
 | Strategy | Retrieval nDCG@10 | Retrieval Recall@10 | Retrieval MAP@10 | Retrieval MRR |
 |---|---|---|---|---|
@@ -432,7 +432,7 @@ short, single-claim abstracts.
 
 Retrieval stage — dense vs. BM25 vs. hybrid, before any reranking:
 
-![Experiment 3 — retriever comparison, retrieval stage](artifacts/images/retriver_only.png)
+![Experiment 3 — retriever comparison, retrieval stage](artifacts/images/retriver_only.PNG)
 
 | Retriever | nDCG@10 | Recall@10 | MAP@10 | MRR |
 |---|---|---|---|---|
@@ -442,7 +442,7 @@ Retrieval stage — dense vs. BM25 vs. hybrid, before any reranking:
 
 Reranking stage — the same three retrievers, each with the cross-encoder reranker added on top:
 
-![Experiment 3 — retriever + cross-encoder reranker, reranking stage](artifacts/images/retriever&reranker.png)
+![Experiment 3 — retriever + cross-encoder reranker, reranking stage](artifacts/images/retriever&reranker.PNG)
 
 | Retriever + reranker | nDCG@10 | Recall@10 | MAP@10 | MRR |
 |---|---|---|---|---|
