@@ -102,6 +102,102 @@ def compare_runs(
 
     return comparison
 
+def pairs_against_baseline(
+    variant_names: list[str],
+    baseline_name: str,
+) -> list[tuple[str, str]]:
+    """
+    Build (baseline, candidate) pairs comparing every other variant
+    against a single designated baseline. Generic across any
+    experiment: works whether the baseline is a chunking strategy
+    (experiment 2), an embedding model (experiment 1), or a
+    retriever/reranker combo (experiment 3) -- it only needs the
+    baseline's name to exist among the variants passed in.
+    """
+    if baseline_name not in variant_names:
+        raise ValueError(
+            f"baseline_name '{baseline_name}' not found in variant_names: "
+            f"{variant_names}"
+        )
+
+    return [
+        (baseline_name, name)
+        for name in variant_names
+        if name != baseline_name
+    ]
+
+
+def compare_variant_pairs(
+    runs: dict[str, RetrievalEvalRun],
+    pairs: list[tuple[str, str]],
+    stage: str,
+) -> dict[str, dict[str, dict[str, Any]]]:
+    """
+    Run compare_runs() over a list of explicit (baseline, candidate)
+    variant-name pairs already present in `runs`, for a single stage.
+
+    Generic across experiments -- `runs` and `pairs` can reference any
+    variant names from any experiment; this just wraps compare_runs()
+    so the pairing/looping logic isn't duplicated per experiment
+    script. Use pairs_against_baseline() to build `pairs` automatically,
+    or pass explicit tuples (e.g. experiment 3's retriever/reranker
+    crossings) when the comparison isn't "everything vs one baseline".
+
+    Returns:
+        {"baseline_name -> candidate_name": {metric: {baseline, candidate, delta}}}
+    """
+    comparisons: dict[str, dict[str, dict[str, Any]]] = {}
+
+    for baseline_name, candidate_name in pairs:
+        for name in (baseline_name, candidate_name):
+            if name not in runs:
+                raise ValueError(
+                    f"Variant '{name}' not found in runs: {list(runs)}"
+                )
+
+        deltas = compare_runs(runs[baseline_name], runs[candidate_name])
+        comparisons[f"{baseline_name} -> {candidate_name}"] = deltas.get(stage, {})
+
+    return comparisons
+
+
+def print_variant_pairs(
+    runs: dict[str, RetrievalEvalRun],
+    pairs: list[tuple[str, str]],
+    stage: str,
+    metric_columns: list[str] | None = None,
+) -> None:
+    """
+    Pretty-print compare_variant_pairs() output. Generic across
+    experiments -- pass whatever pairs and stage make sense for the
+    sweep being run.
+    """
+    from .metrics import friendly_metric_label
+
+    comparisons = compare_variant_pairs(runs, pairs, stage=stage)
+
+    if not comparisons:
+        print(f"No variant pairs to compare for stage '{stage}'")
+        return
+
+    for label, stage_deltas in comparisons.items():
+        print(f"\n{label} ({stage} stage deltas):")
+
+        if not stage_deltas:
+            print(f"  No '{stage}' stage data available for this pair")
+            continue
+
+        columns = metric_columns or sorted(stage_deltas)
+
+        for metric in columns:
+            if metric not in stage_deltas:
+                continue
+            values = stage_deltas[metric]
+            print(
+                f"  {friendly_metric_label(metric):<14} "
+                f"{values['baseline']:.4f} -> {values['candidate']:.4f} "
+                f"({values['delta']:+.4f})"
+            )
 
 def build_leaderboard(
     runs: dict[str, RetrievalEvalRun],

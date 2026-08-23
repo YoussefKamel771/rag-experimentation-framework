@@ -43,7 +43,7 @@ retrieval:
       b: 0.75
 
 reranker:
-  type: identity
+  type: cross_encoder
 
   top_k: 5
 

@@ -122,10 +122,8 @@ def _rows_to_html_table(rows: list[dict[str, Any]], columns: list[str]) -> str:
 
 
 def generate_html_report(
-    runs: dict[str, RetrievalEvalRun],
-    experiment_name: str,
-    output_dir: str | Path,
-    primary_k: int = 10,
+    runs, experiment_name, output_dir, primary_k=10,
+    retrieval_variants=None, reranking_variants=None
 ) -> Path:
     """
     Render one self-contained HTML report for an experiment sweep:
@@ -146,9 +144,12 @@ def generate_html_report(
 
     for stage in ("retrieval", "reranking"):
 
+        variant_filter = retrieval_variants if stage == "retrieval" else reranking_variants
+        stage_runs = {k: v for k, v in runs.items() if variant_filter is None or k in variant_filter}
+
         chart_path = output_dir / f"{stage}_chart.png"
         plot_metric_comparison(
-            runs,
+            stage_runs,
             stage,
             chart_metrics,
             chart_path,

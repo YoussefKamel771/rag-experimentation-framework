@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from configs.config import get_settings
+from src.evaluation import pairs_against_baseline, print_variant_pairs
 from src.evaluation import beir_to_eval_examples, generate_html_report, print_leaderboard
 from src.experiments.runner import ExperimentRunner, ExperimentVariant, apply_overrides
 from src.ingestion.beir_loader import BEIRDatasetLoader
@@ -76,6 +77,11 @@ def main() -> None:
         split=SPLIT,
         save_dir=f"artifacts/eval/{EXPERIMENT_NAME}",
     )
+
+    pairs = pairs_against_baseline(
+        [v.name for v in VARIANTS], baseline_name="recursive_1000_150"
+    )
+    print_variant_pairs(results, pairs, stage="retrieval")
 
     print()
     print("=" * 90)

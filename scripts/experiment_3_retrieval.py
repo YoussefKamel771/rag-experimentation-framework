@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from configs.config import get_settings
 from src.evaluation import beir_to_eval_examples, print_leaderboard, generate_html_report
+from src.evaluation import print_variant_pairs
 from src.experiments.runner import ExperimentRunner, ExperimentVariant, apply_overrides
 from src.ingestion.beir_loader import BEIRDatasetLoader
 
@@ -31,35 +32,45 @@ BASELINE_OVERRIDES = {
     },
     "chunking.strategy": "recursive",
     "chunking.params": {"chunk_size": 1000, "chunk_overlap": 150},
+    "reranker.top_k": 20, 
 }
 
 
 VARIANTS = [
-    ExperimentVariant(
-        name="dense_only",
-        overrides={"retrieval.type": "dense"},
-        reindex=False,
-    ),
-    ExperimentVariant(
-        name="bm25_only",
-        overrides={"retrieval.type": "bm25"},
-        reindex=False,
-    ),
-    ExperimentVariant(
-        name="hybrid",
-        overrides={"retrieval.type": "hybrid"},
-        reindex=False,
-    ),
-    ExperimentVariant(
-        name="hybrid_with_reranker",
-        overrides={
-            "retrieval.type": "hybrid",
-            "reranker.type": "cross_encoder",
-        },
-        reindex=False,
-    ),
+    # Stage 1: pure retrieval comparison (reranker = identity, no-op)
+    ExperimentVariant(name="dense_only",
+                        overrides={"retrieval.type": "dense", 
+                                   "reranker.type": "identity"},
+                        reindex=False),
+    ExperimentVariant(name="bm25_only",
+                       overrides={"retrieval.type": "bm25",
+                                     "reranker.type": "identity"}, 
+                        reindex=False),
+    ExperimentVariant(name="hybrid_only",
+                       overrides={"retrieval.type": "hybrid",
+                        "reranker.type": "identity"},
+                         reindex=False),
+
+    # Stage 2: same three retrievers, now with the cross-encoder added
+    ExperimentVariant(name="dense_reranked",
+                        overrides={"retrieval.type": "dense",
+                                     "reranker.type": "cross_encoder"},
+                         reindex=False),
+    ExperimentVariant(name="bm25_reranked",
+                         overrides={"retrieval.type": "bm25",
+                                       "reranker.type": "cross_encoder"}, 
+                            reindex=False),
+    ExperimentVariant(name="hybrid_reranked",
+                       overrides={"retrieval.type": "hybrid",
+                                   "reranker.type": "cross_encoder"}, 
+                        reindex=False),
 ]
 
+RERANK_PAIRS = [
+    ("dense_only", "dense_reranked"),
+    ("bm25_only", "bm25_reranked"),
+    ("hybrid_only", "hybrid_reranked"),
+]
 
 def main() -> None:
     base_config = get_settings("configs/config.yaml")
@@ -91,6 +102,8 @@ def main() -> None:
         save_dir=f"artifacts/eval/{EXPERIMENT_NAME}",
     )
 
+    print_variant_pairs(results, RERANK_PAIRS, stage="reranking")
+
     print()
     print("=" * 90)
     print("EXPERIMENT 3 -- RETRIEVAL METHOD COMPARISON (retrieval stage)")
@@ -106,9 +119,9 @@ def main() -> None:
     print_leaderboard(results, stage="reranking", sort_by="ndcg_cut_10")
 
     report_path = generate_html_report(
-        results,
-        experiment_name=EXPERIMENT_NAME,
-        output_dir=f"artifacts/eval/{EXPERIMENT_NAME}",
+        results, EXPERIMENT_NAME, f"artifacts/eval/{EXPERIMENT_NAME}",
+        retrieval_variants=["dense_only", "bm25_only", "hybrid_only"],
+        reranking_variants=["dense_reranked", "bm25_reranked", "hybrid_reranked"],
     )
     print(f"\nOpen the visual report: {report_path}")
 

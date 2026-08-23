@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from configs.config import get_settings
+from src.evaluation import pairs_against_baseline, print_variant_pairs
 from src.evaluation import beir_to_eval_examples, print_leaderboard, generate_html_report
 from src.experiments.runner import ExperimentRunner, ExperimentVariant, apply_overrides
 from src.ingestion.beir_loader import BEIRDatasetLoader
 
-EXPERIMENT_NAME = "experiment_1_embedding_models"
+EXPERIMENT_NAME = "experiment_1_embedding"
 DATASET = "scifact"
 SPLIT = "test"
 
@@ -18,11 +19,8 @@ SPLIT = "test"
 # --------------------------------------------------------------------
 
 BASELINE_CHUNKING_OVERRIDES = {
-    "chunking.strategy": "fixed",
-    "chunking.params": {
-        "chunk_size": 1000,
-        "chunk_overlap": 100,
-    },
+    "chunking.strategy": "recursive",
+    "chunking.params": {"chunk_size": 1000, "chunk_overlap": 100},
 }
 
 VARIANTS = [
@@ -89,6 +87,11 @@ def main() -> None:
         split=SPLIT,
         save_dir=f"artifacts/eval/{EXPERIMENT_NAME}",
     )
+
+    pairs = pairs_against_baseline(
+        [v.name for v in VARIANTS], baseline_name="all_minilm_l6_v2"
+    )
+    print_variant_pairs(results, pairs, stage="retrieval")
 
     print()
     print("=" * 90)
