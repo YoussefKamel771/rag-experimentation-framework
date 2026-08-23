@@ -63,6 +63,10 @@ class GenerationConfig(BaseModel):
     )
 
 class Settings(BaseModel):
+    # Optional label used to namespace experiment artifacts (see
+    # src/experiments/paths.py). Not required for normal single-run use.
+    experiment_name: str | None = None
+    
     input_dir: Path
     output_dir: Path
 

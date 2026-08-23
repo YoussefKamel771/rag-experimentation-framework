@@ -8,3 +8,7 @@ pypdf==6.16.1
 PyYAML==6.0.3
 tqdm==4.70.0
 sentence-transformers=5.7.0
+beir==2.2.0
+pytrec_eval>=0.5
+matplotlib>=3.8.0
+ 
