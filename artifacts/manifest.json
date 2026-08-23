@@ -1,0 +1,27 @@
+{
+  "framework_version": "0.1.0",
+  "created_at": "2026-08-22T14:49:19.196183+00:00",
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "input_dir": "/mnt/c/Users/YUSSEF/OneDrive/Desktop/Projects/NlP/rag-experimentation-framework/data/raw/text_data_toc.csv",
+  "documents": 5183,
+  "chunks": 14483,
+  "chunking": {
+    "strategy": "recursive",
+    "chunk_size": 1000,
+    "chunk_overlap": 150
+  },
+  "embedding": {
+    "provider": "sentence_transformers",
+    "dimension": 384,
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "batch_size": 32,
+    "device": "cpu"
+  },
+  "vector_store": {
+    "type": "qdrant",
+    "path": "artifacts/qdrant",
+    "collection_name": "rag_chunks",
+    "distance": "cosine"
+  },
+  "elapsed_seconds": 453.08
+}
