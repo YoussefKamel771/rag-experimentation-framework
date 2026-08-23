@@ -9,6 +9,14 @@ from .base import Reranker
 @reranker_registry.register("identity")
 class IdentityReranker(Reranker):
 
+    def __init__(
+            self,
+            model: str = None,
+            batch_size: int = 16,
+            device: str | None = None,
+        ):
+        pass
+
     def rerank(
         self,
         query: str,

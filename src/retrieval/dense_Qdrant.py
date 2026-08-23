@@ -29,7 +29,7 @@ class DenseQdrantRetriever(Retriever):
             **(embedding_params or {}),
         )
 
-        self._validate_dimension()
+        # self._validate_dimension()
 
     def _validate_dimension(self):
         collection = self.client.get_collection(
